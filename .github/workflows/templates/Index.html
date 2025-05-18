@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forex & Crypto Signal Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .device-frame {
+            max-width: 420px;
+            margin: auto;
+            padding: 1rem;
+            background-color: #1e1e1e;
+            border-radius: 1.5rem;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            margin-top: 40px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #00ffcc;
+        }
+
+        .signal-label {
+            color: #00ffd0;
+            font-weight: bold;
+        }
+
+        .signal-value {
+            color: #ffffff;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: #252525;
+            border: none;
+            margin-bottom: 1rem;
+        }
+
+        .btn-success {
+            background-color: #00c776;
+            border: none;
+        }
+
+        select.form-select {
+            background-color: #333;
+            color: white;
+            border: none;
+        }
+
+        .form-select:focus, .btn:focus {
+            box-shadow: 0 0 5px #00ffcc;
+        }
+
+        .footer {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .clock {
+            font-size: 0.9rem;
+            color: #ccc;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .info-section {
+            font-size: 0.9rem;
+            background-color: #2d2d2d;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            color: #b0eaff;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <div class="clock" id="nyClock">New York Time: --:--:--</div>
+        <h1 class="text-center mb-4">Godzilla Signals</h1>
+
+        <form method="POST" class="mb-4">
+            <div class="input-group">
+                <select name="symbol" class="form-select">
+                    {% for name, code in symbols.items() %}
+                        <option value="{{ name }}" {% if selected_symbol == name %}selected{% endif %}>
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success">Get</button>
+            </div>
+        </form>
+
+        <div class="info-section">
+            <strong>Market Status:</strong> Live | <strong>Signal Strength:</strong> Strong
+        </div>
+
+        {% if signal_data %}
+            {% if signal_data.error %}
+                <div class="alert alert-danger mt-2">{{ signal_data.error }}</div>
+            {% else %}
+                <div class="card p-3">
+                    <div class="signal-label">Symbol:</div>
+                    <div class="signal-value mb-2">{{ signal_data.symbol }}</div>
+
+                    <div class="signal-label">Recommendation:</div>
+                    <div class="signal-value mb-2 text-warning">{{ signal_data.recommendation }}</div>
+
+                    <div class="signal-label">Direction:</div>
+                    <div class="signal-value mb-2 text-info">{{ signal_data.direction }}</div>
+
+                    <div class="signal-label">Entry Price:</div>
+                    <div class="signal-value mb-2">{{ signal_data.entry_price }}</div>
+
+                    <div class="signal-label">Take Profit:</div>
+                    <div class="signal-value mb-2 text-success">{{ signal_data.tp }}</div>
+
+                    <div class="signal-label">Stop Loss:</div>
+                    <div class="signal-value mb-2 text-danger">{{ signal_data.sl }}</div>
+
+                    <div class="signal-label">Breakdown:</div>
+                    <div class="signal-value">
+                        Buy: {{ signal_data.buy }} |
+                        Sell: {{ signal_data.sell }} |
+                        Neutral: {{ signal_data.neutral }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        <div class="footer">Created by Ntsako Khumalo</div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function updateNYClock() {
+            const options = {
+                timeZone: 'America/New_York',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            const timeStr = new Intl.DateTimeFormat([], options).format(new Date());
+            document.getElementById('nyClock').innerText = "New York Time: " + timeStr;
+        }
+        setInterval(updateNYClock, 1000);
+        updateNYClock();
+    </script>
+</body>
+                          </html>
